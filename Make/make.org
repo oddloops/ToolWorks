@@ -20,7 +20,7 @@ An action that */make/* carries out. May have more than one command, either on t
 *** rule
 Explains how and when to remake certain files that are targets of a particular rule.
 *** variables 
-- Define and assign using equal (*=*)
+- Define and assign using equal *(=)*
 - Retrieve the variable value through *$( )* or  *${ }*
 * Examples
 - makefile
