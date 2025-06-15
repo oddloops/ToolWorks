@@ -24,14 +24,14 @@ Explains how and when to remake certain files that are targets of a particular r
 - Retrieve the variable value through *$( )* or  *${ }*
 * Examples
 - makefile
-  #+begin_src makefile
- objects = main.o kbd.o command.o display.o insert.o search.o files.o utils.o
+#+begin_src makefile
+objects = main.o kbd.o command.o display.o insert.o search.o files.o utils.o
 
 .PHONY: clean
 clean :
 	rm -rf $(objects)
 #+end_src
 - running a makefile
- #+begin_src makefile
+#+begin_src makefile
 make clean
- #+end_src
+#+end_src
