@@ -1,2 +1,25 @@
 #+title: MakeFile scripting description
 #+author: oddloops
+* Scripting
+[[https://www.gnu.org/software/bash/manual/bash.html][GNU Bash Manual]]
+** What is scripting?
+The act of automating tasks or control for a given program or system.
+** What is Bash?
+The shell, or command language interpreter, for the GNU operating system.
+* Components
+- *PERMISSION*
+  Changes the file <FILENAME> permissions to allow it to be executable for the user.
+  #+begin_src shell
+chmod u+x <FILENAME>
+  #+end_src
+  Where <FILENAME> is the name of the script file to run.
+  
+- *BEGINNING OF SCRIPT*:
+  #+begin_src shell
+#1/bin/sh
+  #+end_src
+* Usage
+Commands to be run in terminal
+#+begin_src shell
+./<FILNAME> <ARG1> <ARG2> ...
+#+end_src

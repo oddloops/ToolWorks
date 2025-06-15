@@ -1,0 +1,114 @@
+#+title: MakeFile Creation script
+#+author: oddloops
+#+PROPERTY: header-args:shell :tangle ./makeMake :shebang "#!/bin/sh"
+* makeMake
+A script to automate the creation of makefile for C lang use. Takes in three arguments:
+1. Name of the compiler to use.
+2. Name (without the file extension) of the C source.
+3. Name for the makefile.
+
+** Argument check
+#+begin_src shell
+# takes in 3 args
+# (1) name of compiler
+# (2) name (without extension) of C source 
+# (3) name of makefile
+if [ "$#" -eq 3 ]; then
+    # enough args
+    ARG_1=$1
+    ARG_2=$2
+    ARG_3=$3
+elif [ "$#" -eq 2 ]; then
+    # set arg 1 and 2
+    ARG_1=$1
+    ARG_2=$2
+    # prompt for third arg
+    echo -en "Enter a value for (3)Name (without extension) of C: "
+    read ARG_3
+elif [ "$#" -eq 1 ]; then 
+    # prompt for second and third args
+    ARG_1=$1
+    echo -en "Enter a value for (2)Name (without extension) of C: "
+    read ARG_2
+    echo -en "Enter a value for (3)Name (without extension) of C: "
+    read ARG_3
+elif [ "$#" -eq 0 ]; then
+    # prompt for (1) (2) (3) args
+    echo -en "Enter a value for (1)Name of the compiler: "
+    read ARG_1
+    echo -en "Enter a value for (2)Name (without extension) of C: "
+    read ARG_2
+    echo -en "Enter a value for (3)Name of makefile: "
+    read ARG_3
+else
+    # terminate with a usage message
+    echo "Usage:"
+    echo -e "\tmakeMake compiler executable makefile"
+    echo -e "\tmakeMake compiler executable"
+    echo -e "\tmakeMake compiler"
+    echo -e "\tmakeMake"
+    exit 1
+fi
+#+end_src
+
+** Existing makefile deletion
+#+begin_src shell
+# Delete existing file with ARG_3 name if exists
+if [ -f "$ARG_3" ]; then
+    read -p "Delete existing makefile? (Y/N)" -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]
+       then
+	   echo "Deleting MakeFile"
+	   rm "$ARG_3"
+   else
+       echo "Aborting deletion and creation"
+       exit 1
+    fi
+fi
+#+end_src
+
+** MakeFile contents
+#+begin_src shell
+# create makefile
+touch "$ARG_3"
+echo "# Makefile generated automatically by makeMake, on `date`" >> "$ARG_3"
+echo >> "$ARG_3"
+echo "# Variables used by makefile" >> "$ARG_3"
+echo "CC=${ARG_1}" >> "$ARG_3"
+echo "NO_DEBUG_FLAGS= -c -Wall -std=c11"
+echo "DEBUG_FLAGS= -g -c -Wall -std=c11"
+echo "CFLAGS=\${DEBUG_FLAGS}" >> "$ARG_3"
+echo "EXE=${ARG_2}" >> "$ARG_3"
+echo -en "OBJECTS=" >> "$ARG_3"
+# declare an array to hold all object files
+declare -a objects
+index=0
+for file in *.c; do
+    filename="${file%.*}"
+    if [ "$ARG_2" != "$filename" ]; then
+	echo -en "${filename}.o " >> "$ARG_3"
+	objects[index]="$filename"
+	index=$((index+1))
+    fi
+done
+
+echo >> "$ARG_3" 
+echo "# Recipes for targets" >> "$ARG_3" | echo >> "$ARG_3"
+
+for name in "${objects[@]}"; do
+    echo "${name}.o: ${name}.c ${name}.h" >> "$ARG_3"
+    echo -e "\t\$(CC) \$(CFLAGS) -c ${name}.c" >> "$ARG_3"
+    echo >> "$ARG_3"
+done
+
+echo "${ARG_2}: \$(OBJECTS)" >> "$ARG_3"
+echo -e "\t\$(CC) -o \$(EXE) \$(OBJECTS) \$(EXE).c" >> "$ARG_3"
+
+echo >> "$ARG_3"
+echo "# PHONY targets" >> "$ARG_3" | echo >> "$ARG_3"
+echo ".PHONY: clean" >> "$ARG_3" 
+echo "clean:" >> "$ARG_3"
+echo -e "\trm -rf *~ \$(OBJECTS) \$(EXE)" >> "$ARG_3" | echo >> "$ARG_3"
+echo "# End of makefile" >> "$ARG_3"
+#+end_src
