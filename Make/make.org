@@ -32,6 +32,6 @@ clean :
 	rm -rf $(objects)
 #+end_src
 - running a makefile
-  #+begin_src makefile
+ #+begin_src makefile
 make clean
-  #+end_src
+ #+end_src
