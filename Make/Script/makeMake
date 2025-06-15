@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # takes in 3 args
 # (1) name of compiler
 # (2) name (without extension) of C source 
@@ -20,7 +20,7 @@ elif [ "$#" -eq 1 ]; then
     ARG_1=$1
     echo -en "Enter a value for (2)Name (without extension) of C: "
     read ARG_2
-    echo -en "Enter a value for (3)Name (without extension) of C: "
+    echo -en "Enter a value for (3)Name of makefile: "
     read ARG_3
 elif [ "$#" -eq 0 ]; then
     # prompt for (1) (2) (3) args
@@ -42,16 +42,7 @@ fi
 
 # Delete existing file with ARG_3 name if exists
 if [ -f "$ARG_3" ]; then
-    read -p "Delete existing makefile? (Y/N)" -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]
-       then
-	   echo "Deleting MakeFile"
-	   rm "$ARG_3"
-   else
-       echo "Aborting deletion and creation"
-       exit 1
-    fi
+    rm "$ARG_3"
 fi
 
 # create makefile
@@ -61,7 +52,7 @@ echo >> "$ARG_3"
 echo "# Variables used by makefile" >> "$ARG_3"
 echo "CC=${ARG_1}" >> "$ARG_3"
 echo "NO_DEBUG_FLAGS= -c -Wall -std=c11"
-echo "DEBUG_FLAGS= -g -c -Wall -std=c11"
+echo "DEBUG_FLAGS= -g -c -Wall -std=c11" >> "$ARG_3"
 echo "CFLAGS=\${DEBUG_FLAGS}" >> "$ARG_3"
 echo "EXE=${ARG_2}" >> "$ARG_3"
 echo -en "OBJECTS=" >> "$ARG_3"
@@ -77,11 +68,14 @@ for file in *.c; do
     fi
 done
 
-echo >> "$ARG_3" 
-echo "# Recipes for targets" >> "$ARG_3" | echo >> "$ARG_3"
+echo >> "$ARG_3"
+echo >> "$ARG_3"
+echo "# Recipes for targets" >> "$ARG_3"
+echo >> "$ARG_3"
 
 for name in "${objects[@]}"; do
-    echo "${name}.o: ${name}.c ${name}.h" >> "$ARG_3"
+    [ -f "${name}.h" ] && echo "${name}.o: ${name}.c ${name}.h" >> "$ARG_3" || \
+	    echo "${name}.o: ${name}.c" >> "$ARG_3"
     echo -e "\t\$(CC) \$(CFLAGS) -c ${name}.c" >> "$ARG_3"
     echo >> "$ARG_3"
 done
