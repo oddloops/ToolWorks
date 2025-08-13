@@ -16,7 +16,7 @@ chmod u+x <FILENAME>
   
 - *BEGINNING OF SCRIPT*:
   #+begin_src shell
-#1/bin/sh
+#!/bin/sh
   #+end_src
 * Usage
 Commands to be run in terminal
